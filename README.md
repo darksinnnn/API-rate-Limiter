@@ -1,58 +1,147 @@
-🚀 Smart API Rate Limiter
-A robust, production-ready API rate limiting service built with Spring Boot and Redis.
-This project demonstrates how to protect backend services from traffic spikes, brute-force attacks, and API abuse by implementing a distributed rate limiting architecture using the Token Bucket algorithm.
-🧠 System Architecture
-The system intercepts incoming HTTP requests before they reach the core business logic. It queries a centralized Redis cache to check the user's current token allocation.
-Client Request 
-   │
-   ▼
-[ Spring Interceptor ] ──(Checks tokens)──> [ Redis (Token Store) ]
-   │
-   ├──> IF EXCEEDED: Returns 429 Too Many Requests
-   │
-   ▼
-[ REST Controller ] (Business Logic Executed)
+Here is a cleaner, more professional GitHub-ready version with proper Markdown syntax and minimal emojis:
 
+---
 
-✨ Features
-Distributed & Scalable: Uses Redis to store rate-limit counters, allowing multiple instances of this Spring Boot app to share the same rate-limit state seamlessly.
-Token Bucket Algorithm: Implements a time-windowed token bucket approach to allow for smooth traffic handling while capping absolute maximums.
-Zero-Bypass Architecture: Utilizes Spring's HandlerInterceptor to ensure every request is evaluated before controller execution.
-Atomic Operations: Uses Redis increment operations to prevent race conditions during concurrent requests.
-🛠️ Tech Stack
-Language: Java 17+
-Framework: Spring Boot 3 (Spring Web, Spring Data Redis)
-Database/Cache: Redis
-Tools: Maven, Postman (Testing)
-🚦 Getting Started
-Prerequisites
-Java Development Kit (JDK) 17 or higher installed.
-Maven installed.
-Redis server running locally on port 6379.
-Installation & Run
-Clone the repository:
-use git clone 
+# Smart API Rate Limiter
 
+A production-ready API rate limiting service built with **Spring Boot** and **Redis**.
 
-Navigate to the directory:
+This project demonstrates how to protect backend services from traffic spikes, brute-force attacks, and API abuse using a distributed rate limiting architecture based on the **Token Bucket algorithm**.
+
+---
+
+## Overview
+
+The system intercepts incoming HTTP requests before they reach the core business logic. It checks whether a user has available tokens and either allows the request or blocks it.
+
+### Request Flow
+
+```
+Client Request
+      |
+Spring HandlerInterceptor (checks tokens)
+      |
+Redis (Token Store)
+      |
+If limit exceeded  -> HTTP 429 Too Many Requests
+If within limit    -> REST Controller (Business Logic Executed)
+```
+
+---
+
+## Features
+
+* **Distributed and Scalable**
+  Uses Redis to store rate-limit counters, allowing multiple application instances to share the same rate-limit state.
+
+* **Token Bucket Algorithm**
+  Implements a time-windowed token bucket strategy to smooth traffic while enforcing strict limits.
+
+* **Interceptor-Based Enforcement**
+  Uses Spring's `HandlerInterceptor` to ensure every request is validated before reaching controller methods.
+
+* **Atomic Operations**
+  Uses Redis atomic increment operations to prevent race conditions during concurrent requests.
+
+---
+
+## Tech Stack
+
+* **Language:** Java 17+
+* **Framework:** Spring Boot 3 (Spring Web, Spring Data Redis)
+* **Database/Cache:** Redis
+* **Build Tool:** Maven
+* **Testing Tool:** Postman / cURL
+
+---
+
+## Prerequisites
+
+* Java Development Kit (JDK) 17 or higher
+* Maven installed
+* Redis server running locally on port `6379`
+
+---
+
+## Installation and Running
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
 cd rate-limiter
+```
 
+### 2. Run the Application
 
-Run the Spring Boot application:
+```bash
 ./mvnw spring-boot:run
+```
 
-The server will start on http://localhost:8080.
-🧪 Testing the API
-To test the rate limiter, send multiple requests using Postman or cURL. The limit is configured to 10 requests per 60 seconds per user.
-Success Request (Tokens Available):
+The application will start at:
+
+```
+http://localhost:8080
+```
+
+---
+
+## API Testing
+
+The rate limit is configured to:
+
+```
+10 requests per 60 seconds per user
+```
+
+The user is identified via the `X-User-ID` header.
+
+### Successful Request
+
+```bash
 curl -i -H "X-User-ID: user_123" http://localhost:8080/api/test
+```
 
+**Expected Response:**
 
-Expected Output: HTTP 200 OK
-Blocked Request (Limit Exceeded):
+```
+HTTP/1.1 200 OK
+```
+
+### Exceeded Limit
+
+Run the above command more than 10 times within 60 seconds (e.g., 11 times quickly).
+
+```bash
 curl -i -H "X-User-ID: user_123" http://localhost:8080/api/test
+```
 
+**Expected Response:**
 
-(Run this 11 times quickly)
-Expected Output: HTTP 429 Too Many Requests ("Too many requests! Please wait.")
+```
+HTTP/1.1 429 Too Many Requests
+```
 
+Response message:
+
+```
+Too many requests! Please wait.
+```
+
+---
+
+## How It Works
+
+* Each user is assigned a token bucket.
+* Every request consumes one token.
+* Tokens are replenished at a fixed rate.
+* If no tokens are available, the request is rejected with HTTP 429.
+
+---
+
+If you'd like, I can also provide:
+
+* A more concise README version
+* A version with architecture diagram (Mermaid)
+* Production deployment notes (Docker + Redis setup)
+* Configuration-based rate limit customization
