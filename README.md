@@ -1,7 +1,3 @@
-Here is a cleaner, more professional GitHub-ready version with proper Markdown syntax and minimal emojis:
-
----
-
 # Smart API Rate Limiter
 
 A production-ready API rate limiting service built with **Spring Boot** and **Redis**.
@@ -137,9 +133,6 @@ Too many requests! Please wait.
 * Tokens are replenished at a fixed rate.
 * If no tokens are available, the request is rejected with HTTP 429.
 
----
-
-If you'd like, I can also provide:
 
 * A more concise README version
 * A version with architecture diagram (Mermaid)
